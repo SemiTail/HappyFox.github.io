@@ -97,3 +97,62 @@ days.forEach((day, index) => {
 closeModal.addEventListener('click', () => {
   modal.style.display = 'none';
 });
+
+// Функция для сохранения состояния закрытых дней
+function saveClosedDays() {
+  const closedDays = [...document.querySelectorAll('.day.opened')].map(day => day.dataset.day);
+  localStorage.setItem('closedDays', JSON.stringify(closedDays));
+}
+
+// Функция для загрузки закрытых дней
+function loadClosedDays() {
+  const closedDays = JSON.parse(localStorage.getItem('closedDays')) || [];
+  closedDays.forEach(dayNum => {
+    const day = document.querySelector(`.day[data-day="${dayNum}"]`);
+    if (day) {
+      day.classList.add('opened');
+      day.textContent = '🎁';
+    }
+  });
+}
+
+// Загрузка закрытых дней при загрузке страницы
+loadClosedDays();
+
+// Обработка клика по дням
+days.forEach((day, index) => {
+  day.addEventListener('click', () => {
+    if (!token) {
+      alert('Сначала войдите через Discord!');
+      return;
+    }
+
+    if (day.classList.contains('opened')) {
+      alert('Вы уже открыли этот день!');
+      return;
+    }
+
+    const currentDate = new Date();
+    const currentDay = currentDate.getDate();
+
+    if (parseInt(day.dataset.day) > currentDay) {
+      alert('Этот день еще не наступил!');
+      return;
+    }
+
+    // Показ подарка
+    giftSound.play();
+    modal.style.display = 'flex';
+    modalText.textContent = gifts[index];
+
+    // Закрытие дня
+    day.classList.add('opened');
+    day.textContent = '🎁'; // Меняем текст на значок
+    saveClosedDays();
+  });
+});
+
+// Закрытие модального окна
+closeModal.addEventListener('click', () => {
+  modal.style.display = 'none';
+});
