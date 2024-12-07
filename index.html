@@ -3,61 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Адвент Календарь</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Календарь</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
-    <button id="login-button">Войти через Discord</button>
-    <div id="user-info" style="display: none;">
-      <p>Добро пожаловать, <span id="user-name"></span>!</p>
-      <img id="user-avatar" src="" alt="Аватар" width="50">
-    </div>
-  </header>
-
-  <div class="calendar">
-    <!-- 31 день календаря -->
-    <div class="day odd" data-day="1">1</div>
-    <div class="day even" data-day="2">2</div>
-    <div class="day odd" data-day="3">3</div>
-    <div class="day even" data-day="4">4</div>
-    <div class="day odd" data-day="5">5</div>
-    <div class="day even" data-day="6">6</div>
-    <div class="day special" data-day="7">7</div>
-    <div class="day even" data-day="8">8</div>
-    <div class="day odd" data-day="9">9</div>
-    <div class="day even" data-day="10">10</div>
-    <div class="day odd" data-day="11">11</div>
-    <div class="day even" data-day="12">12</div>
-    <div class="day odd" data-day="13">13</div>
-    <div class="day special" data-day="14">14</div>
-    <div class="day odd" data-day="15">15</div>
-    <div class="day even" data-day="16">16</div>
-    <div class="day odd" data-day="17">17</div>
-    <div class="day even" data-day="18">18</div>
-    <div class="day odd" data-day="19">19</div>
-    <div class="day even" data-day="20">20</div>
-    <div class="day special" data-day="21">21</div>
-    <div class="day even" data-day="22">22</div>
-    <div class="day odd" data-day="23">23</div>
-    <div class="day even" data-day="24">24</div>
-    <div class="day odd" data-day="25">25</div>
-    <div class="day even" data-day="26">26</div>
-    <div class="day odd" data-day="27">27</div>
-    <div class="day special" data-day="28">28</div>
-    <div class="day odd" data-day="29">29</div>
-    <div class="day even" data-day="30">30</div>
-    <div class="day special" data-day="31">31</div>
+  <div id="user-info" class="user-info" style="display: none;">
+    <img id="user-avatar" class="user-avatar" src="" alt="User Avatar" />
+    <span class="greeting-text">Привет, <span id="user-name"></span>!</span>
   </div>
 
-  <div class="modal" id="modal">
+  <button id="login-button">Войти через Discord</button>
+
+  <div id="calendar">
+    <!-- Дни календаря -->
+    <div class="day" data-day="1">1</div>
+    <div class="day" data-day="2">2</div>
+    <div class="day" data-day="3">3</div>
+    <div class="day" data-day="4">4</div>
+    <div class="day" data-day="5">5</div>
+    <div class="day" data-day="6">6</div>
+    <div class="day" data-day="7">7</div>
+    <div class="day" data-day="8">8</div>
+    <div class="day" data-day="9">9</div>
+    <div class="day" data-day="10">10</div>
+    <div class="day" data-day="11">11</div>
+    <div class="day" data-day="12">12</div>
+    <div class="day" data-day="13">13</div>
+    <div class="day" data-day="14">14</div>
+    <div class="day" data-day="15">15</div>
+    <div class="day" data-day="16">16</div>
+    <div class="day" data-day="17">17</div>
+    <div class="day" data-day="18">18</div>
+    <div class="day" data-day="19">19</div>
+    <div class="day" data-day="20">20</div>
+    <div class="day" data-day="21">21</div>
+    <div class="day" data-day="22">22</div>
+    <div class="day" data-day="23">23</div>
+    <div class="day" data-day="24">24</div>
+    <div class="day" data-day="25">25</div>
+  </div>
+
+  <!-- Модальное окно -->
+  <div id="modal" class="modal">
     <div class="modal-content">
-      <button class="close">Закрыть</button>
-      <h2>🎁 Сюрприз дня!</h2>
+      <span class="close">&times;</span>
       <p id="gift-text"></p>
     </div>
   </div>
 
+  <!-- Аудио -->
   <audio id="gift-sound" src="gift.mp3"></audio>
 
   <script src="script.js"></script>

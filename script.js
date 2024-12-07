@@ -11,7 +11,7 @@ const userAvatar = document.getElementById('user-avatar');
 
 const discordAuthUrl = 'https://discord.com/api/oauth2/authorize';
 const clientId = '1314768632667963502'; // Укажите ваш CLIENT ID
-const redirectUri = 'https://semitail.github.io/HappyFox.github.io/'; // Укажите ваш Redirect URI
+const redirectUri = 'https://your-redirect-uri'; // Укажите ваш Redirect URI
 const scope = 'identify';
 
 // Подарки
@@ -43,7 +43,7 @@ const gifts = [
   "Киндер Пингви 🍞",
 ];
 
-// Создание авторизационной ссылки
+// Авторизация через Discord
 loginButton.addEventListener('click', () => {
   const authUrl = `${discordAuthUrl}?client_id=${clientId}&redirect_uri=${encodeURIComponent(
     redirectUri
@@ -66,7 +66,7 @@ if (token) {
     .then((data) => {
       userNameSpan.textContent = data.username;
       userAvatar.src = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
-      userInfo.style.display = 'block';
+      userInfo.style.display = 'flex';
       loginButton.style.display = 'none';
     })
     .catch((err) => console.error('Ошибка получения данных пользователя:', err));
