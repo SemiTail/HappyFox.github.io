@@ -11,7 +11,7 @@ const userAvatar = document.getElementById('user-avatar');
 
 const discordAuthUrl = 'https://discord.com/api/oauth2/authorize';
 const clientId = '1314768632667963502'; // Укажите ваш CLIENT ID
-const redirectUri = 'http://localhost:63342/'; // Укажите ваш Redirect URI
+const redirectUri = 'https://semitail.github.io/HappyFox.github.io/'; // Укажите ваш Redirect URI
 const scope = 'identify';
 
 // Подарки
