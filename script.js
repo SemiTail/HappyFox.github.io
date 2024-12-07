@@ -1,100 +1,121 @@
-const days = document.querySelectorAll('.day');
-const modal = document.getElementById('modal');
-const modalText = document.getElementById('gift-text');
-const closeModal = document.querySelector('.close');
-const giftSound = document.getElementById('gift-sound');
+// Проверка, залогинен ли пользователь через Discord
+let isLoggedIn = false; // Установим флаг в false (по умолчанию)
+let userData = null; // Переменная для хранения данных пользователя
 
-const loginButton = document.getElementById('login-button');
-const userInfo = document.getElementById('user-info');
-const userNameSpan = document.getElementById('user-name');
-const userAvatar = document.getElementById('user-avatar');
+// Функция для симуляции авторизации через Discord
+function checkDiscordLogin() {
+  const token = localStorage.getItem('discordToken'); // Получаем токен из LocalStorage
 
-const discordAuthUrl = 'https://discord.com/api/oauth2/authorize';
-const clientId = '1314768632667963502'; // Укажите ваш CLIENT ID
-const redirectUri = 'https://discord.com/oauth2/authorize?client_id=1314768632667963502&response_type=code&redirect_uri=https%3A%2F%2Fsemitail.github.io%2FHappyFox.github.io%2F&scope=identify'; // Укажите ваш Redirect URI
-const scope = 'identify';
-
-// Подарки
-const gifts = [
-  "Шоколад 🍫",
-  "Мандарин 🍊",
-  "Плюшевый мишка 🧸",
-  "Книга 📖",
-  "Гирлянда 🎇",
-  "Какао ☕",
-  "Шапка 🎅",
-  "Открытка 🎄",
-  "Снежинка ❄️",
-  "Игрушка-сюрприз 🎉",
-  "Носки 🧦",
-  "Свеча 🕯️",
-  "Орехи 🌰",
-  "Календарь 📅",
-  "Фоторамка 🖼️",
-  "Кусочек пирога 🍰",
-  "Конфеты 🍬",
-  "Шарик 🎈",
-  "Брелок 🔑",
-  "Снежный шар 🌨️",
-  "Новогодняя кружка ☕",
-  "Маленькая елочка 🌲",
-  "Кусочек торта 🍰",
-  "Шоколадный батончик 🍫",
-  "Киндер Пингви 🍞",
-];
-
-// Авторизация через Discord
-loginButton.addEventListener('click', () => {
-  const authUrl = `${discordAuthUrl}?client_id=${clientId}&redirect_uri=${encodeURIComponent(
-    redirectUri
-  )}&response_type=token&scope=${scope}`;
-  window.location.href = authUrl;
-});
-
-// Проверка токена
-const hash = window.location.hash.substring(1);
-const hashParams = new URLSearchParams(hash);
-const token = hashParams.get('access_token');
-
-if (token) {
-  fetch('https://discord.com/api/users/@me', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      userNameSpan.textContent = data.username;
-      userAvatar.src = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
-      userInfo.style.display = 'flex';
-      loginButton.style.display = 'none';
-    })
-    .catch((err) => console.error('Ошибка получения данных пользователя:', err));
+  if (token) {
+    isLoggedIn = true;
+    userData = {
+      username: 'Имя пользователя',  // Здесь будет имя пользователя
+      avatarUrl: 'https://cdn.discordapp.com/avatars/123456789012345678/abcdefg.png', // Пример URL аватарки
+    };
+    document.getElementById('discord-login').style.display = 'none'; // Скрыть кнопку входа
+    document.getElementById('calendar').style.display = 'block'; // Показать календарь
+    document.getElementById('user-card').style.display = 'flex'; // Показать карточку пользователя
+    displayUserCard(); // Отобразить карточку пользователя
+  } else {
+    isLoggedIn = false;
+    document.getElementById('login-message').style.display = 'block'; // Показать сообщение о необходимости логина
+    document.getElementById('discord-login').style.display = 'block'; // Показать кнопку логина
+    document.getElementById('user-card').style.display = 'none'; // Скрыть карточку пользователя
+  }
 }
 
-// Обработка клика по дням
-days.forEach((day, index) => {
+
+// Обработка авторизации через Discord
+const discordBtn = document.getElementById('discord-login-btn');
+const discordLogin = document.getElementById('discord-login');
+
+discordBtn.addEventListener('click', function() {
+  // Симуляция логина, можно добавить настоящую OAuth2 авторизацию
+  localStorage.setItem('discordToken', 'mocked-token'); // Пример хранения токена
+  checkDiscordLogin();
+});
+
+// Функция для отображения карточки пользователя
+function displayUserCard() {
+  const userCard = document.getElementById('user-card');
+  const usernameElem = userCard.querySelector('.username');
+  const avatarElem = userCard.querySelector('.avatar');
+  const greetingElem = userCard.querySelector('.greeting');
+
+  if (userData) {
+    // Устанавливаем имя пользователя и аватар
+    usernameElem.textContent = `Привет, ${userData.username}!`;
+    avatarElem.src = userData.avatarUrl;
+    avatarElem.alt = userData.username;
+
+    // Пожелание с Новым годом
+    greetingElem.textContent = 'С Новым годом! Пусть 2024 год принесет счастье и успех! 🎉';
+  }
+}
+
+// Обработка открытия календаря
+const days = document.querySelectorAll('.day');
+const modal = document.getElementById('modal');
+const giftText = document.getElementById('gift-text');
+const giftSound = document.getElementById('gift-sound');
+const lockedMessage = document.querySelector('.locked-message');
+const loginMessage = document.querySelector('.login-message');
+
+days.forEach(day => {
   day.addEventListener('click', () => {
-    if (!token) {
-      alert('Сначала войдите через Discord!');
+    if (!isLoggedIn) {
+      loginMessage.style.display = 'block';
+      setTimeout(() => {
+        loginMessage.style.opacity = 0;
+      }, 2000);
+      return; // Не даем открывать день, если не залогинен
+    }
+
+    if (day.classList.contains('opened')) {
       return;
     }
 
-    const currentDate = new Date();
-    const currentDay = currentDate.getDate();
+    const dayNumber = day.dataset.day;
+    const currentDate = new Date().getDate();
 
-    if (parseInt(day.dataset.day) > currentDay) {
-      alert('Этот день еще не наступил!');
-      return;
+    if (dayNumber <= currentDate) {
+      day.classList.add('opened');
+      giftText.textContent = `Вы открыли подарок за день ${dayNumber}! 🎉`;
+      giftSound.play();
+      modal.style.display = 'flex';
+    } else {
+      lockedMessage.style.display = 'block';
+      lockedMessage.style.opacity = 1;
+      setTimeout(() => {
+        lockedMessage.style.opacity = 0;
+      }, 2000);
     }
-
-    giftSound.play();
-    modal.style.display = 'flex';
-    modalText.textContent = gifts[index];
   });
 });
 
 // Закрытие модального окна
-closeModal.addEventListener('click', () => {
+const closeBtn = document.querySelector('.close');
+closeBtn.addEventListener('click', () => {
   modal.style.display = 'none';
 });
+
+// Генерация снежинок
+function generateSnowflakes() {
+  const snowflake = document.createElement('div');
+  snowflake.classList.add('snowflake');
+  snowflake.textContent = '❄️';
+  document.body.appendChild(snowflake);
+
+  const leftPosition = Math.random() * window.innerWidth;
+  snowflake.style.left = `${leftPosition}px`;
+
+  setTimeout(() => {
+    snowflake.remove();
+  }, 5000);
+}
+
+// Генерация снежинок каждую секунду
+setInterval(generateSnowflakes, 1000);
+
+// Проверка авторизации при загрузке страницы
+checkDiscordLogin();

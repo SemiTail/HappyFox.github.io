@@ -1,3 +1,4 @@
+/* Общие стили */
 body {
   font-family: Arial, sans-serif;
   background: linear-gradient(to bottom, #333, #111);
@@ -55,6 +56,7 @@ body {
   cursor: pointer;
   transition: transform 0.3s, background 0.3s;
 }
+
 .day:hover:not(.opened) {
   background: linear-gradient(to bottom, #f3b592, #f06b31 90%);
   transform: scale(1.1);
@@ -157,23 +159,98 @@ body {
   padding: 10px 20px;
   border-radius: 5px;
   font-size: 16px;
-  display: none; /* Изначально скрыта */
+  display: none;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   opacity: 0;
-  animation: slideIn 0.5s forwards; /* Анимация появления */
+  animation: slideIn 0.5s forwards;
 }
 
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(20px); /* Начальная позиция */
+    transform: translateX(-50%) translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0); /* Конечная позиция */
+    transform: translateX(-50%) translateY(0);
   }
 }
 
 .day {
-  user-select: none; /* Отключаем выделение текста в ячейках */
+  user-select: none;
+}
+
+.discord-login {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+
+.discord-btn {
+  background-color: #7289da;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.discord-btn:hover {
+  background-color: #5a6fb3;
+}
+
+/* Сообщение для пользователей, которые не вошли */
+.login-message {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff9e00;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  display: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Стили для карточки пользователя */
+.user-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.user-card .avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.user-card .username {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.user-card .greeting {
+  font-size: 16px;
+  color: #555;
 }
