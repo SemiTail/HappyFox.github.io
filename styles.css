@@ -1,72 +1,74 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f4f4f9;
+  background: linear-gradient(to bottom, #333, #111);
   margin: 0;
-  padding: 20px;
-  text-align: center;
-}
-
-#calendar {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.day {
-  background-color: #7289da;
-  color: white;
-  padding: 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 18px;
-  text-align: center;
-}
-
-.day:hover {
-  background-color: #5a6bbd;
-}
-
-.user-info {
   display: flex;
-  align-items: center;
   justify-content: center;
-  background-color: #2c2f33;
-  color: #ffffff;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.user-avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 15px;
-  border: 2px solid #7289da;
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 100px);
+  grid-template-rows: repeat(5, 100px);
+  gap: 10px;
+  position: relative;
 }
 
-.greeting-text {
-  font-size: 18px;
+.day.odd {
+  background: linear-gradient(to bottom, #e78e96, #e74e58);
+  color: #111;
+  font-size: 32px;
   font-weight: bold;
-}
-
-#login-button {
-  background-color: #7289da;
-  color: white;
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
   cursor: pointer;
-  margin-bottom: 20px;
+  transition: transform 0.3s, background 0.3s;
 }
 
-#login-button:hover {
-  background-color: #5a6bbd;
+.day.even {
+  background: linear-gradient(to bottom, #fff, #b6cff5);
+  color: #111;
+  font-size: 33px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.3s, background 0.3s;
+}
+
+.day.special {
+  background: linear-gradient(to bottom, #97aac5, #2d72df);
+  color: 111;
+  font-size: 32px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.3s, background 0.3s;
+}
+.day:hover:not(.opened) {
+  background: linear-gradient(to bottom, #f3b592, #f06b31 90%);
+  transform: scale(1.1);
+}
+
+.day.special:hover:not(.opened) {
+  background: #83c6ff;
+}
+
+.day.opened {
+  background: #555;
+  color: #333;
+  cursor: default;
+  transform: none;
 }
 
 .modal {
@@ -76,29 +78,102 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   justify-content: center;
   align-items: center;
 }
 
 .modal-content {
-  background-color: white;
+  background: #F5DEB3;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
-  width: 300px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  animation: pop 0.5s;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 20px;
+  background: #ff6f61;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
   cursor: pointer;
-  color: #333;
 }
 
 .close:hover {
-  color: red;
+  background: #ff8364;
+}
+
+.snowflake {
+  position: fixed;
+  opacity: 1;
+  top: -10%;
+  color: white;
+  font-size: 20px;
+  pointer-events: none;
+  animation: moveDown 5s linear infinite, fadeOut 5s linear infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes moveDown {
+  0% {
+    opacity: 1;
+    transform: translateY(-100px) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100vh) rotate(180deg);
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.locked-message {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff4c4c;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  display: none; /* Изначально скрыта */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  animation: slideIn 0.5s forwards; /* Анимация появления */
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px); /* Начальная позиция */
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0); /* Конечная позиция */
+  }
+}
+
+.day {
+  user-select: none; /* Отключаем выделение текста в ячейках */
 }
