@@ -1,15 +1,22 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Адвент Календарь с Discord</title>
+  <title>Адвент Календарь</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Календарь -->
+  <header>
+    <button id="login-button">Войти через Discord</button>
+    <div id="user-info" style="display: none;">
+      <p>Добро пожаловать, <span id="user-name"></span>!</p>
+      <img id="user-avatar" src="" alt="Аватар" width="50">
+    </div>
+  </header>
+
   <div class="calendar">
-    <!-- Ячейки для каждого дня -->
+    <!-- 31 день календаря -->
     <div class="day odd" data-day="1">1</div>
     <div class="day even" data-day="2">2</div>
     <div class="day odd" data-day="3">3</div>
@@ -35,19 +42,23 @@
     <div class="day odd" data-day="23">23</div>
     <div class="day even" data-day="24">24</div>
     <div class="day odd" data-day="25">25</div>
+    <div class="day even" data-day="26">26</div>
+    <div class="day odd" data-day="27">27</div>
+    <div class="day special" data-day="28">28</div>
+    <div class="day odd" data-day="29">29</div>
+    <div class="day even" data-day="30">30</div>
+    <div class="day special" data-day="31">31</div>
   </div>
 
-  <!-- Карточка пользователя -->
-  <div id="user-card" class="user-card" style="display: none;">
-    <img id="avatar" class="avatar" alt="Avatar" />
-    <div id="username" class="username"></div>
-    <div id="greeting" class="greeting"></div>
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <button class="close">Закрыть</button>
+      <h2>🎁 Сюрприз дня!</h2>
+      <p id="gift-text"></p>
+    </div>
   </div>
 
-  <!-- Кнопка для входа через Discord -->
-  <div id="discord-login" class="discord-login" style="display: none;">
-    <button id="discord-login-btn" class="discord-btn">Войти через Discord</button>
-  </div>
+  <audio id="gift-sound" src="gift.mp3"></audio>
 
   <script src="script.js"></script>
 </body>
